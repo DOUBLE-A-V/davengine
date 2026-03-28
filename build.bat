@@ -1,0 +1,1 @@
+clang++ main.cpp davengine.cpp src/Object.cpp src/Modifier.cpp src/modifiers/Objprops.cpp src/modifiers/Sprite.cpp -L"E:/ACDEV/davengine/lib" -I"E:/ACDEV/davengine/include" -I"E:/ACDEV/davengine/include/modifiers" -llibraylibdll -o davengine.exe -g -O3 -Wall -Wextra -Wpedantic -Werror -mwindows
