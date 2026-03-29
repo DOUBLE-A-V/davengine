@@ -10,7 +10,6 @@ public:
     Color* color;
     void Draw() override;
     Modifier* CreateClone() override {
-        printf("wtf\n");
         return new Sprite();
     }
     Texture2D texture;

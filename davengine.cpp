@@ -4,12 +4,14 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 #include "Objprops.h"
-/*
+
 int Davengine::modifierIdCounter = 0;
 float Davengine::deltaTime = 0;
 int Davengine::idcounter = 0;
-Object* Davengine::mainTree = 0;
-*/
+vector<ModifierSample*> Davengine::modifiersSamples = {};
+vector<Object*> Davengine::allObjects = {};
+vector<FontDescriptor*> Davengine::fonts = {};
+
 
 int Davengine::RegisterModifier(Modifier* modifierSample, string name) {
     ModifierSample* modSample = new ModifierSample();
@@ -17,6 +19,25 @@ int Davengine::RegisterModifier(Modifier* modifierSample, string name) {
     modSample->name = name;
     modifiersSamples.push_back(modSample);
     return modifiersSamples.size();
+}
+
+FontDescriptor* Davengine::DAVLoadFont(string path, string name) {
+    FontDescriptor* fontDescriptor = new FontDescriptor();
+    fontDescriptor->name = name;
+    fontDescriptor->font = LoadFont(path.c_str());
+    fonts.push_back(fontDescriptor);
+    return fontDescriptor;
+}
+void Davengine::DAVUnloadFont(string name) {
+    vector<FontDescriptor*> formatted = {};
+    for (FontDescriptor* fontDescriptor : fonts) {
+        if (fontDescriptor->name != name) {
+            formatted.push_back(fontDescriptor);
+        } else {
+            delete fontDescriptor;
+        }
+    }
+    fonts = formatted;
 }
 
 Modifier* Davengine::CreateModifier(string name) {
@@ -68,14 +89,32 @@ void Davengine::AddModifier(Modifier* mod, Object* obj) {
 }
 
 Sprite* Davengine::CreateSpriteModifier(string texturePath) {
-    Sprite* sprite = static_cast<Sprite*>(CreateModifier("sprite"));
+    Sprite* sprite = static_cast<Sprite*>(CreateModifier("Sprite"));
     sprite->texture = LoadTexture(texturePath.c_str());
     return sprite;
 }
 
+void Davengine::SetFont(Text* textModifier, string fontName) {
+    for (FontDescriptor* fontDescriptor : fonts) {
+        if (fontDescriptor->name == fontName) {
+            textModifier->font = fontDescriptor;
+            textModifier->font->font = fontDescriptor->font;
+            textModifier->font->name = fontDescriptor->name;
+        }
+    }
+}
+
+Text* Davengine::CreateTextModifier(string fontName, string text) {
+    Text* textMod = static_cast<Text*>(CreateModifier("Text"));
+    SetFont(textMod, fontName);
+    textMod->text = text;
+    return textMod;
+}
+
 void Davengine::InitDavengine()
 {
-    RegisterModifier(new Sprite(), "sprite");
+    RegisterModifier(new Sprite(), "Sprite");
+    RegisterModifier(new Text(), "Text");
 
     const int screenWidth = 800;
     const int screenHeight = 450;
