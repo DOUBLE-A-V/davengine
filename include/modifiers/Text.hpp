@@ -25,7 +25,7 @@ public:
     FontDescriptor* font;
 
     void Draw() override {
-        DrawTextPro(font->font, text.c_str(), Vector2 {0, 0}, Vector2 {parent->position->x*-1, parent->position->y}, parent->rotation, size, 2, *color);
+        DrawTextPro(font->font, text.c_str(), Vector2 {parent->position->x*-1, parent->position->y}, Vector2 {0, 0}, parent->rotation, size, 2, *color);
     }
     Modifier* CreateClone() override {return new Text();}
 };

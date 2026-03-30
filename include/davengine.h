@@ -26,6 +26,8 @@ namespace Davengine {
 
     Object* GetObject(int id);
     Object* GetObject(Objprops* props);
+    Object* FindObject(string name);
+    
     void AddModifier(Modifier* mod, Object* obj);
 
     FontDescriptor* DAVLoadFont(string path, string name);
@@ -36,7 +38,7 @@ namespace Davengine {
 
     void SetFont(Text* textModifier, string fontName);
 
-    void InitDavengine();
+    void InitDavengine(int windowWidth, int windowHeight);
 
     void Mainloop();
 }

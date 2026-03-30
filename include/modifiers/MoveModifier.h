@@ -12,5 +12,6 @@ public:
         if (IsKeyDown(KEY_A)) parent->position->x -= speed * Davengine::deltaTime;
         if (IsKeyDown(KEY_S)) parent->position->y -= speed * Davengine::deltaTime;
         if (IsKeyDown(KEY_D)) parent->position->x += speed * Davengine::deltaTime;
+        if (IsKeyDown(KEY_R)) parent->rotation += speed * Davengine::deltaTime;
     };
 };

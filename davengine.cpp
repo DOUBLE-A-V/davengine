@@ -80,6 +80,13 @@ Object* Davengine::GetObject(Objprops* props) {
     return 0;
 }
 
+Object* Davengine::FindObject(string name) {
+    for (Object* obj : allObjects) {
+        if (obj->name == name) return obj;
+    }
+    return 0;
+}
+
 void Davengine::AddModifier(Modifier* mod, Object* obj) {
     if (mod->parent != 0) {
         GetObject(mod->parent)->RemoveModifier(mod);
@@ -111,13 +118,13 @@ Text* Davengine::CreateTextModifier(string fontName, string text) {
     return textMod;
 }
 
-void Davengine::InitDavengine()
+void Davengine::InitDavengine(int windowWidth, int windowHeight)
 {
     RegisterModifier(new Sprite(), "Sprite");
     RegisterModifier(new Text(), "Text");
 
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = windowWidth;
+    const int screenHeight = windowHeight;
 
     InitWindow(screenWidth, screenHeight, "davengine");
 
