@@ -12,6 +12,7 @@ public:
     Object() {
         children = {};
         modifiers = {};
+        parent = nullptr;
     }
     void UpdateModifiers();
     void DrawModifiers();

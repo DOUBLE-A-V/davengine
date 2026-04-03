@@ -23,10 +23,8 @@ public:
             hasConstraintor = false;
             if (tmp != nullptr)
             {
-                cout << "dildo 1" << "\n";
                 hasConstraintor = true;
                 constraintor = static_cast<ContainerConstraintor*>(tmp);
-                cout << "dildo 2" << "\n";
             }
 
             float sinRot = sin((parent->rotation + 90) * radian);
@@ -34,15 +32,27 @@ public:
 
             if (!hasConstraintor)
             {
+                child->props->scale = Vector2{
+                        child->props->localScale.x * parent->scale.x,
+                        child->props->localScale.y * parent->scale.y
+                    };
+                
                 child->props->rotation = parent->rotation + child->props->localRotation;
                 child->props->position.x = parent->position.x + 
-                child->props->localPosition.x * sinRot + 
-                child->props->localPosition.y * cosRot;
+                (child->props->localPosition.x * sinRot + 
+                child->props->localPosition.y * cosRot) * parent->scale.x;
 
                 child->props->position.y = parent->position.y + 
-                child->props->localPosition.y * sinRot +
-                child->props->localPosition.x * cosRot;
+                (child->props->localPosition.y * sinRot +
+                child->props->localPosition.x * cosRot) * parent->scale.y;
             } else {
+                if (!constraintor->noContainScale)
+                {
+                    child->props->scale = Vector2{
+                        child->props->localScale.x * parent->scale.x,
+                        child->props->localScale.y * parent->scale.y
+                    };
+                } else child->props->scale = Vector2 {1, 1};
                 if (!constraintor->noContainRotation)
                 {
                     child->props->rotation = parent->rotation + child->props->localRotation;
@@ -55,12 +65,12 @@ public:
                 } else
                 {
                     child->props->position.x = parent->position.x + 
-                    child->props->localPosition.x * sinRot + 
-                    child->props->localPosition.y * cosRot;
+                    (child->props->localPosition.x * sinRot + 
+                    child->props->localPosition.y * cosRot) * parent->scale.x;
 
                     child->props->position.y = parent->position.y + 
-                    child->props->localPosition.y * sinRot +
-                    child->props->localPosition.x * cosRot;
+                    (child->props->localPosition.y * sinRot +
+                    child->props->localPosition.x * cosRot) * parent->scale.y;
                 }
             }
         }

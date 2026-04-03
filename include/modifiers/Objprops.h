@@ -10,7 +10,7 @@ public:
         localPosition = Vector2{0, 0};
 
         scale = Vector2{1, 1};
-        localScale = Vector2{0, 0};
+        localScale = Vector2{1, 1};
     }
     Vector2 position;
     Vector2 localPosition;

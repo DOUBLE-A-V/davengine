@@ -13,5 +13,6 @@ public:
         noOrbitalRotation = false;
         noContainRotation = false;
         noContainScale = false;
+        enabled = false;
     }
 };

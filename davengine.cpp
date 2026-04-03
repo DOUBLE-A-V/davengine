@@ -146,10 +146,10 @@ void Davengine::Mainloop() {
         BeginDrawing();
             ClearBackground(bgColor);
             for (Object* obj : allObjects) {
-                obj->UpdateModifiers();
+                if (obj->parent == nullptr) obj->UpdateModifiers();
             }
             for (Object* obj : allObjects) {
-                obj->DrawModifiers();
+                if (obj->parent == nullptr) obj->DrawModifiers();
             }
         EndDrawing();
     }

@@ -4,12 +4,6 @@
 
 using namespace Davengine;
 
-
-template<typename T>
-T* dildoPrig(T, string ebatSobak) {
-    return new T();
-}
-
 int main() {
     RegisterModifier(new MoveModifier(), "MoveModifier");
 
@@ -24,13 +18,16 @@ int main() {
 
     Object* someObj = CreateObject("object");
     Object* someObj2 = CreateObject("object2");
+    Object* someObj3 = CreateObject("object3");
 
     Sprite* someSprite = CreateSpriteModifier("icon.png");
     Sprite* someSprite2 = CreateSpriteModifier("icon.png");
+    Sprite* someSprite3 = CreateSpriteModifier("icon.png");
 
     ContainerConstraintor* containerConstraintor = CreateCastModifier<ContainerConstraintor>("ContainerConstraintor");
     AddModifier(containerConstraintor, someObj2);
     containerConstraintor->noContainRotation = true;
+    containerConstraintor->noContainScale = true;
 
     AddModifier(someSprite2, someObj2);
 
@@ -45,6 +42,14 @@ int main() {
 
     someObj2->SetParent(someObj);
     someObj2->props->localPosition.x = 500;
+    someObj2->props->localScale.x = 0.2f;
+    someObj2->props->localScale.y = 0.2f;
+
+    AddModifier(CreateModifier("Container"), someObj2);
+
+    AddModifier(someSprite3, someObj3);
+    someObj3->SetParent(someObj2);
+    someObj3->props->localPosition.x = 500;
 
     Mainloop();
     return 0;

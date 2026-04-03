@@ -5,12 +5,18 @@ void Object::UpdateModifiers() {
         if (!mod->enabled) continue;
         mod->Update();
     }
+    for (Object* obj : this->children) {
+        obj->UpdateModifiers();
+    }
 }
 
 void Object::DrawModifiers() {
     for (Modifier* mod : this->modifiers) {
         if (!mod->enabled) continue;
         mod->Draw();
+    }
+    for (Object* obj : this->children) {
+        obj->DrawModifiers();
     }
 }
 
@@ -48,8 +54,7 @@ void Object::SetParent(Object* newParent) {
         this->parent->RemoveChild(this);
     }
     this->parent = newParent;
-    newParent->children.push_back(this);
-    cout << newParent->children.size() << "\n";
+    if (newParent != nullptr) newParent->children.push_back(this);
 }
 
 Modifier* Object::RemoveModifier(Modifier* mod) {
