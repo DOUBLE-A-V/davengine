@@ -16,6 +16,8 @@ Color Davengine::bgColor = Color{255, 255, 255, 255};
 float Davengine::windowWidth = 0;
 float Davengine::windowHeight = 0;
 
+Camera2D* Davengine::camera = new Camera2D{{0, 0}, {0, 0}, 0, 1};
+
 
 int Davengine::RegisterModifier(Modifier* modifierSample, string name) {
     ModifierSample* modSample = new ModifierSample();
@@ -123,7 +125,7 @@ Text* Davengine::CreateTextModifier(string fontName, string text) {
     return textMod;
 }
 
-void Davengine::InitDavengine(int newWindowWidth, int newWindowHeight)
+void Davengine::InitDavengine(int newWindowWidth, int newWindowHeight, string title)
 {
     RegisterModifier(new Sprite(), "Sprite");
     RegisterModifier(new Text(), "Text");
@@ -133,7 +135,9 @@ void Davengine::InitDavengine(int newWindowWidth, int newWindowHeight)
     windowWidth = newWindowWidth;
     windowHeight = newWindowHeight;
 
-    InitWindow(windowWidth, windowHeight, "davengine");
+    InitWindow(windowWidth, windowHeight, title.c_str());
+
+    camera->offset = Vector2{windowWidth/2, windowHeight/2};
 
     SetTargetFPS(60);
 }
@@ -142,15 +146,16 @@ void Davengine::Mainloop() {
     while (!WindowShouldClose())
     {
         deltaTime = GetFrameTime();
-
         BeginDrawing();
-            ClearBackground(bgColor);
+        ClearBackground(bgColor);
+        BeginMode2D(*camera);
             for (Object* obj : allObjects) {
                 if (obj->parent == nullptr) obj->UpdateModifiers();
             }
             for (Object* obj : allObjects) {
                 if (obj->parent == nullptr) obj->DrawModifiers();
             }
+        EndMode2D();
         EndDrawing();
     }
 

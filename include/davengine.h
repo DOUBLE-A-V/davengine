@@ -33,12 +33,16 @@ namespace Davengine {
     extern DAV_API float windowWidth;
     extern DAV_API float windowHeight;
 
-    extern Color bgColor;
+    extern DAV_API Color bgColor;
+    extern DAV_API Camera2D* camera;
 
     DAV_API Object* CreateObject(string name);
     DAV_API Modifier* CreateModifier(string name);
-    template<typename T>
-    DAV_API T* CreateCastModifier(T, string name);
+    template<class T>
+    DAV_API T* CreateCastModifier(string name)
+    {
+        return static_cast<T*>(CreateModifier(name));
+    }
     DAV_API int RegisterModifier(Modifier* modifierSample, string name);
 
     DAV_API Object* GetObject(int id);
@@ -55,7 +59,7 @@ namespace Davengine {
 
     DAV_API void SetFont(Text* textModifier, string fontName);
 
-    DAV_API void InitDavengine(int windowWidth, int windowHeight);
+    DAV_API void InitDavengine(int windowWidth, int windowHeight, string title);
 
     DAV_API void Mainloop();
     #else
@@ -69,6 +73,8 @@ namespace Davengine {
     extern float windowHeight;
 
     extern Color bgColor;
+
+    extern Camera2D* camera;
 
     Object* CreateObject(string name);
     Modifier* CreateModifier(string name);
@@ -94,7 +100,7 @@ namespace Davengine {
 
     void SetFont(Text* textModifier, string fontName);
 
-    void InitDavengine(int windowWidth, int windowHeight);
+    void InitDavengine(int windowWidth, int windowHeight, string title);
 
     void Mainloop();
     #endif
