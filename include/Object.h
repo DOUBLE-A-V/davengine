@@ -9,12 +9,21 @@ using namespace std;
 
 class Object {
 public:
-    const float radian = PI / 180;
+    Object() {
+        children = {};
+        modifiers = {};
+    }
     void UpdateModifiers();
+    void DrawModifiers();
     
     void RemoveChild(Object* child);
     void SetParent(Object* newParent);
     void AddChild(Object* newChild);
+
+    template<typename T>
+    T* GetCastModifier(T, string name);
+
+    Modifier* GetModifier(string name);
 
     Objprops* props;
     string name;

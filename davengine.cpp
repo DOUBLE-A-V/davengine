@@ -4,13 +4,17 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 #include "Objprops.h"
+#include "Container.hpp"
 
-int Davengine::modifierIdCounter = 0;
 float Davengine::deltaTime = 0;
 int Davengine::idcounter = 0;
 vector<ModifierSample*> Davengine::modifiersSamples = {};
 vector<Object*> Davengine::allObjects = {};
 vector<FontDescriptor*> Davengine::fonts = {};
+Color Davengine::bgColor = Color{255, 255, 255, 255};
+
+float Davengine::windowWidth = 0;
+float Davengine::windowHeight = 0;
 
 
 int Davengine::RegisterModifier(Modifier* modifierSample, string name) {
@@ -42,12 +46,11 @@ void Davengine::DAVUnloadFont(string name) {
 
 Modifier* Davengine::CreateModifier(string name) {
     for (ModifierSample* modSample : modifiersSamples) {
-        if (modSample->name == name) {
-            modifierIdCounter++;
-            
+        if (modSample->name == name) 
+        {
             Modifier* modifier = modSample->modifier->CreateClone();
+            modifier->name = name;
             modifier->parent = 0;
-            modifier->id = modifierIdCounter;
             return modifier;
         }
     }
@@ -74,7 +77,8 @@ Object* Davengine::GetObject(int id) {
 }
 
 Object* Davengine::GetObject(Objprops* props) {
-    for (Object* obj : allObjects) {
+    for (Object* obj : allObjects)
+    {
         if (obj->props == props) return obj;
     }
     return 0;
@@ -93,6 +97,7 @@ void Davengine::AddModifier(Modifier* mod, Object* obj) {
     }
     mod->parent = obj->props;
     obj->modifiers.push_back(mod);
+    mod->OnAdd();
 }
 
 Sprite* Davengine::CreateSpriteModifier(string texturePath) {
@@ -118,15 +123,17 @@ Text* Davengine::CreateTextModifier(string fontName, string text) {
     return textMod;
 }
 
-void Davengine::InitDavengine(int windowWidth, int windowHeight)
+void Davengine::InitDavengine(int newWindowWidth, int newWindowHeight)
 {
     RegisterModifier(new Sprite(), "Sprite");
     RegisterModifier(new Text(), "Text");
+    RegisterModifier(new Container(), "Container");
+    RegisterModifier(new ContainerConstraintor(), "ContainerConstraintor");
 
-    const int screenWidth = windowWidth;
-    const int screenHeight = windowHeight;
+    windowWidth = newWindowWidth;
+    windowHeight = newWindowHeight;
 
-    InitWindow(screenWidth, screenHeight, "davengine");
+    InitWindow(windowWidth, windowHeight, "davengine");
 
     SetTargetFPS(60);
 }
@@ -137,9 +144,12 @@ void Davengine::Mainloop() {
         deltaTime = GetFrameTime();
 
         BeginDrawing();
-            ClearBackground(RAYWHITE);
+            ClearBackground(bgColor);
             for (Object* obj : allObjects) {
                 obj->UpdateModifiers();
+            }
+            for (Object* obj : allObjects) {
+                obj->DrawModifiers();
             }
         EndDrawing();
     }

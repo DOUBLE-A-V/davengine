@@ -1,23 +1,29 @@
 #include "Object.h"
 
 void Object::UpdateModifiers() {
-    if (parent != nullptr) {
-        props->scale->x = parent->props->scale->x * props->localScale->x;
-        props->scale->y = parent->props->scale->y * props->localScale->y;
-
-        props->rotation = parent->props->rotation + props->localRotation;
-
-        Vector2 tmpLocalPos;
-        tmpLocalPos.x = props->localPosition->x * parent->props->scale->x;
-        tmpLocalPos.y = props->localPosition->y * parent->props->scale->y;
-
-        props->position->x = parent->props->position->x + (tmpLocalPos.x * sin(props->rotation * radian) + cos(props->rotation * radian) * tmpLocalPos.y);
-        props->position->y = parent->props->position->y + (tmpLocalPos.y * sin(props->rotation * radian) + cos(props->rotation * radian) * tmpLocalPos.x);
-    }
     for (Modifier* mod : this->modifiers) {
+        if (!mod->enabled) continue;
         mod->Update();
+    }
+}
+
+void Object::DrawModifiers() {
+    for (Modifier* mod : this->modifiers) {
+        if (!mod->enabled) continue;
         mod->Draw();
     }
+}
+
+template<typename T>
+T* Object::GetCastModifier(T, string name)
+{
+    for (Modifier* mod : modifiers) if (mod->name == name) return static_cast<T*>(mod);
+    return nullptr;
+}
+
+Modifier* Object::GetModifier(string name) {
+    for (Modifier* mod : modifiers) if (mod->name == name) return mod;
+    return nullptr;
 }
 
 void Object::RemoveChild(Object* child) {
@@ -43,6 +49,7 @@ void Object::SetParent(Object* newParent) {
     }
     this->parent = newParent;
     newParent->children.push_back(this);
+    cout << newParent->children.size() << "\n";
 }
 
 Modifier* Object::RemoveModifier(Modifier* mod) {
