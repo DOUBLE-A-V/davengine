@@ -5,18 +5,21 @@
 #endif
 #include "Objprops.h"
 #include "Container.hpp"
+#include "CircleCollision.hpp"
 
 float Davengine::deltaTime = 0;
 int Davengine::idcounter = 0;
 vector<ModifierSample*> Davengine::modifiersSamples = {};
 vector<Object*> Davengine::allObjects = {};
 vector<FontDescriptor*> Davengine::fonts = {};
+vector<TextureAsset*> Davengine::textureAssets = {};
 Color Davengine::bgColor = Color{255, 255, 255, 255};
 
 float Davengine::windowWidth = 0;
 float Davengine::windowHeight = 0;
 
 Camera2D* Davengine::camera = new Camera2D{{0, 0}, {0, 0}, 0, 1};
+Camera2D* Davengine::realCamera = new Camera2D{{0, 0}, {0, 0}, 0, 1};
 
 
 int Davengine::RegisterModifier(Modifier* modifierSample, string name) {
@@ -52,7 +55,7 @@ Modifier* Davengine::CreateModifier(string name) {
         {
             Modifier* modifier = modSample->modifier->CreateClone();
             modifier->name = name;
-            modifier->parent = 0;
+            modifier->props = 0;
             return modifier;
         }
     }
@@ -94,17 +97,34 @@ Object* Davengine::FindObject(string name) {
 }
 
 void Davengine::AddModifier(Modifier* mod, Object* obj) {
-    if (mod->parent != 0) {
-        GetObject(mod->parent)->RemoveModifier(mod);
+    if (mod->props != 0) {
+        GetObject(mod->props)->RemoveModifier(mod);
     }
-    mod->parent = obj->props;
+    mod->props = obj->props;
     obj->modifiers.push_back(mod);
     mod->OnAdd();
 }
 
-Sprite* Davengine::CreateSpriteModifier(string texturePath) {
+TextureAsset* Davengine::GetTextureAsset(string name) {
+    for (TextureAsset* asset : textureAssets) {
+        if (asset->name == name) {
+            return asset;
+        }
+    }
+    return nullptr;
+}
+
+Vector2 Davengine::GetMouseWorldPosition(){
+    Vector2 mousepos = GetMousePosition();
+    return Vector2 {mousepos.x - realCamera->offset.x, -mousepos.y + realCamera->offset.y};
+}
+
+Sprite* Davengine::CreateSpriteModifier(string texturePath, bool useAsset) {
     Sprite* sprite = static_cast<Sprite*>(CreateModifier("Sprite"));
-    sprite->texture = LoadTexture(texturePath.c_str());
+    if (!useAsset) sprite->texture = LoadTexture(texturePath.c_str());
+    else {
+        sprite->texture = GetTextureAsset(texturePath)->texture;
+    }
     return sprite;
 }
 
@@ -125,19 +145,46 @@ Text* Davengine::CreateTextModifier(string fontName, string text) {
     return textMod;
 }
 
+TextureAsset* Davengine::LoadTextureAsset(string path, string assetName)
+{
+    Texture2D texture = LoadTexture(path.c_str());
+    TextureAsset* textureAsset = new TextureAsset {assetName, path, texture};
+    textureAssets.push_back(textureAsset);
+    return textureAsset;
+}
+
+void Davengine::UnloadTextureAsset(string name)
+{
+    vector<TextureAsset*> newTextureAssets;
+    for (TextureAsset* asset : textureAssets)
+    {
+        if (asset->name != name) {
+            newTextureAssets.push_back(asset);
+        } else {
+            UnloadTexture(asset->texture);
+            delete asset;
+        }
+    }
+    textureAssets = newTextureAssets;
+}
+
 void Davengine::InitDavengine(int newWindowWidth, int newWindowHeight, string title)
 {
     RegisterModifier(new Sprite(), "Sprite");
     RegisterModifier(new Text(), "Text");
     RegisterModifier(new Container(), "Container");
     RegisterModifier(new ContainerConstraintor(), "ContainerConstraintor");
+    RegisterModifier(new CircleCollision(), "CircleCollision");
+    RegisterModifier(new RectCollision(), "RectCollision");
+    //RegisterModifier(new CircleDraw(), "CircleDraw");
+    
 
     windowWidth = newWindowWidth;
     windowHeight = newWindowHeight;
 
     InitWindow(windowWidth, windowHeight, title.c_str());
 
-    camera->offset = Vector2{windowWidth/2, windowHeight/2};
+    camera->offset = Vector2{0, 0};
 
     SetTargetFPS(60);
 }
@@ -148,7 +195,10 @@ void Davengine::Mainloop() {
         deltaTime = GetFrameTime();
         BeginDrawing();
         ClearBackground(bgColor);
-        BeginMode2D(*camera);
+        realCamera->offset = Vector2 {-camera->offset.x + windowWidth/2, -camera->offset.y + windowHeight/2};
+        realCamera->zoom = camera->zoom;
+        realCamera->rotation = camera->rotation;
+        BeginMode2D(*realCamera);
             for (Object* obj : allObjects) {
                 if (obj->parent == nullptr) obj->UpdateModifiers();
             }
@@ -156,8 +206,26 @@ void Davengine::Mainloop() {
                 if (obj->parent == nullptr) obj->DrawModifiers();
             }
         EndMode2D();
+        for (Object* obj : allObjects) {
+            if (obj->parent == nullptr) obj->DrawInterfaceModifiers();
+        }
         EndDrawing();
     }
 
     CloseWindow();
+}
+
+void Davengine::ShutdownEngine() {
+    for (FontDescriptor* font : fonts) {
+        delete font;
+    }
+    for (Object* obj : allObjects) {
+        delete obj;
+    }
+    for (ModifierSample* modSample : modifiersSamples) {
+        delete modSample;
+    }
+    for (TextureAsset* asset : textureAssets) {
+        delete asset;
+    }
 }

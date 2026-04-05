@@ -14,15 +14,26 @@ public:
         modifiers = {};
         parent = nullptr;
     }
+    ~Object() {
+        for (Modifier* mod : modifiers) {
+            delete mod;
+        }
+        delete props;
+    }
     void UpdateModifiers();
     void DrawModifiers();
+    void DrawInterfaceModifiers();
     
     void RemoveChild(Object* child);
     void SetParent(Object* newParent);
     void AddChild(Object* newChild);
 
     template<typename T>
-    T* GetCastModifier(T, string name);
+    T* GetCastModifier(string name)
+    {
+        for (Modifier* mod : modifiers) if (mod->name == name) return static_cast<T*>(mod);
+        return nullptr;
+    }
 
     Modifier* GetModifier(string name);
 

@@ -11,7 +11,6 @@
 #include "raylib.h"
 #include "Sprite.h"
 #include "Text.hpp"
-//#include "ContainerConstraintor.hpp"
 #include "Object.h"
 
 using namespace std;
@@ -20,6 +19,16 @@ class ModifierSample {
 public:
     Modifier* modifier;
     string name;
+    ~ModifierSample() {
+        delete modifier;
+    }
+};
+
+struct TextureAsset
+{
+    string name;
+    string path;
+    Texture2D texture;
 };
 
 namespace Davengine {
@@ -35,6 +44,10 @@ namespace Davengine {
 
     extern DAV_API Color bgColor;
     extern DAV_API Camera2D* camera;
+    
+    extern Camera2D* realCamera;
+
+    Vector2 GetMouseWorldPosition();
 
     DAV_API Object* CreateObject(string name);
     DAV_API Modifier* CreateModifier(string name);
@@ -51,10 +64,15 @@ namespace Davengine {
     
     DAV_API void AddModifier(Modifier* mod, Object* obj);
 
+    DAV_API TextureAsset* LoadTextureAsset(string path, string assetName);
+    DAV_API void UnloadTextureAsset(string assetName);
+
+    DAV_API TextureAsset* GetTextureAsset(string name);
+
     DAV_API FontDescriptor* DAVLoadFont(string path, string name);
     DAV_API void DAVUnloadFont(string name);
 
-    DAV_API Sprite* CreateSpriteModifier(string texturePath);
+    DAV_API Sprite* CreateSpriteModifier(string texturePath, bool useAsset = false);
     DAV_API Text* CreateTextModifier(string fontName, string text);
 
     DAV_API void SetFont(Text* textModifier, string fontName);
@@ -62,6 +80,8 @@ namespace Davengine {
     DAV_API void InitDavengine(int windowWidth, int windowHeight, string title);
 
     DAV_API void Mainloop();
+
+    void ShutdownEngine();
     #else
     extern float deltaTime;
     extern vector<ModifierSample*> modifiersSamples;
@@ -69,12 +89,18 @@ namespace Davengine {
     extern vector<Object*> allObjects;
     extern vector<FontDescriptor*> fonts;
 
+    extern vector<TextureAsset*> textureAssets;
+
     extern float windowWidth;
     extern float windowHeight;
 
     extern Color bgColor;
 
     extern Camera2D* camera;
+
+    extern Camera2D* realCamera;
+
+    Vector2 GetMouseWorldPosition();
 
     Object* CreateObject(string name);
     Modifier* CreateModifier(string name);
@@ -95,7 +121,12 @@ namespace Davengine {
     FontDescriptor* DAVLoadFont(string path, string name);
     void DAVUnloadFont(string name);
 
-    Sprite* CreateSpriteModifier(string texturePath);
+    TextureAsset* LoadTextureAsset(string path, string assetName);
+    void UnloadTextureAsset(string assetName);
+
+    TextureAsset* GetTextureAsset(string name);
+
+    Sprite* CreateSpriteModifier(string texturePath, bool useAsset = false);
     Text* CreateTextModifier(string fontName, string text);
 
     void SetFont(Text* textModifier, string fontName);
@@ -103,5 +134,7 @@ namespace Davengine {
     void InitDavengine(int windowWidth, int windowHeight, string title);
 
     void Mainloop();
+
+    void ShutdownEngine();
     #endif
 }

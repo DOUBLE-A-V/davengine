@@ -19,12 +19,14 @@ void Object::DrawModifiers() {
         obj->DrawModifiers();
     }
 }
-
-template<typename T>
-T* Object::GetCastModifier(T, string name)
-{
-    for (Modifier* mod : modifiers) if (mod->name == name) return static_cast<T*>(mod);
-    return nullptr;
+void Object::DrawInterfaceModifiers() {
+    for (Modifier* mod : this->modifiers) {
+        if (!mod->enabled) continue;
+        mod->DrawInterface();
+    }
+    for (Object* obj : this->children) {
+        obj->DrawInterfaceModifiers();
+    }
 }
 
 Modifier* Object::GetModifier(string name) {
@@ -63,6 +65,6 @@ Modifier* Object::RemoveModifier(Modifier* mod) {
         if (modifier != mod) outList.push_back(modifier);
     }
     modifiers = outList;
-    mod->parent = 0;
+    mod->props = 0;
     return mod;
 }
