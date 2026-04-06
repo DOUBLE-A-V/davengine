@@ -1,40 +1,25 @@
 #include "davengine.h"
-#include "Container.hpp"
+#include "Container.h"
 #include "MoveModifier.h"
-#include "Dildo.hpp"
-#include "CircleDraw.hpp"
 
 using namespace Davengine;
-
 int main()
 {
-    InitDavengine(1280, 720, "davengine game");
+    InitDavengine(1920, 1080, "davengine game");
 
-    DAVLoadFont("font.ttf", "font");
-
+    RegisterModifier(new Container(), "Container");
     RegisterModifier(new MoveModifier(), "MoveModifier");
-    RegisterModifier(new CircleDraw(), "CircleDraw");
-    RegisterModifier(new Dildo(), "Dildo");
-
-    LoadTextureAsset("icon.png", "icon");
-
-    Object* circle = CreateObject("circle");
-    CircleDraw* circleDraw = CreateCastModifier<CircleDraw>("CircleDraw");
-    circleDraw->radius = 100;
-    circleDraw->color = Color {0, 0, 0, 255};
-    AddModifier(circleDraw, circle);
-    AddModifier(CreateModifier("CircleCollision"), circle);
 
     Object* obj = CreateObject("object");
-    AddModifier(CreateTextModifier("font", "hello world"), obj);
+    AddModifier(CreateSpriteModifier("icon.png"), obj);
+    AddModifier(CreateModifier("Container"), obj);
     AddModifier(CreateModifier("MoveModifier"), obj);
-    AddModifier(CreateModifier("RectCollision"), obj);
-    obj->GetCastModifier<RectCollision>("RectCollision")->size = Vector2 {275, 250};
-    AddModifier(CreateModifier("Dildo"), obj);
-    AddModifier(CreateSpriteModifier("icon", true), obj);
-    
-    Mainloop();
 
+    Object* obj2 = CreateObject("object 2");
+    AddModifier(CreateSpriteModifier("icon.png"), obj2);
+    obj2->SetParent(obj);
+    obj2->props->localPosition.x = 500;
+    Mainloop();
     ShutdownEngine();
     return 0;
 };

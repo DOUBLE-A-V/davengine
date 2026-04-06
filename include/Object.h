@@ -1,5 +1,13 @@
 #pragma once
 
+//#define DAV_DLL
+
+#ifdef DAV_EXPORTS
+#define DAV_API __declspec(dllexport)
+#else
+#define DAV_API __declspec(dllimport)
+#endif
+
 #include <iostream>
 #include "string.h"
 #include "vector"
@@ -9,6 +17,15 @@ using namespace std;
 
 class Object {
 public:
+    Objprops* props;
+    string name;
+    Object* parent;
+    vector<Object*> children;
+    vector<Modifier*> modifiers;
+    Modifier* RemoveModifier(Modifier* mod);
+    int id;
+
+    #if !defined(DAV_DLL) && !defined(DAVENGINE_GAME)
     Object() {
         children = {};
         modifiers = {};
@@ -28,20 +45,33 @@ public:
     void SetParent(Object* newParent);
     void AddChild(Object* newChild);
 
-    template<typename T>
-    T* GetCastModifier(string name)
-    {
-        for (Modifier* mod : modifiers) if (mod->name == name) return static_cast<T*>(mod);
-        return nullptr;
-    }
+    template<class T>
+    T* GetCastModifier(string name);
 
     Modifier* GetModifier(string name);
+    #else
+    Object() {
+        children = {};
+        modifiers = {};
+        parent = nullptr;
+    }
+    ~Object() {
+        for (Modifier* mod : modifiers) {
+            delete mod;
+        }
+        delete props;
+    }
+    DAV_API void UpdateModifiers();
+    DAV_API void DrawModifiers();
+    DAV_API void DrawInterfaceModifiers();
+    
+    DAV_API void RemoveChild(Object* child);
+    DAV_API void SetParent(Object* newParent);
+    DAV_API void AddChild(Object* newChild);
 
-    Objprops* props;
-    string name;
-    Object* parent;
-    vector<Object*> children;
-    vector<Modifier*> modifiers;
-    Modifier* RemoveModifier(Modifier* mod);
-    int id;
+    template<class T>
+    DAV_API T* GetCastModifier(string name);
+
+    Modifier* GetModifier(string name);
+    #endif
 };

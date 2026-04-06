@@ -1,0 +1,3 @@
+clang++ -std=c++17 -I./include -I./include/modifiers -DDAV_DLL -DDAV_EXPORTS -target x86_64-w64-mingw32 -c davengine.cpp src/Object.cpp src/Modifier.cpp src/modifiers/Objprops.cpp src/modifiers/ContainerConstraintor.cpp src/modifiers/Sprite.cpp src/modifiers/CircleCollision.cpp src/modifiers/RectCollision.cpp src/modifiers/Collision.cpp src/modifiers/Container.cpp src/modifiers/Text.cpp 
+
+clang++ -std=c++17 -L./lib -I./include -I./include/modifiers -target x86_64-w64-windows-gnu -shared -o davengine.dll davengine.o Collision.o Object.o Modifier.o Objprops.o Sprite.o CircleCollision.o ContainerConstraintor.o RectCollision.o Container.o Text.o -Wl,--out-implib,davengine.lib -lraylibdll -g -O3 -Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter

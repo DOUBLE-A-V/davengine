@@ -29,6 +29,13 @@ void Object::DrawInterfaceModifiers() {
     }
 }
 
+template<class T>
+T* Object::GetCastModifier(string name) {
+    for (Modifier* mod : modifiers) if (mod->name == name) return static_cast<T*>(mod);
+    return nullptr;
+}
+
+
 Modifier* Object::GetModifier(string name) {
     for (Modifier* mod : modifiers) if (mod->name == name) return mod;
     return nullptr;

@@ -1,6 +1,7 @@
 #pragma once
 
 //#define DAV_DLL
+//#define DAVENGINE_GAME
 
 #ifdef DAV_EXPORTS
 #define DAV_API __declspec(dllexport)
@@ -10,7 +11,7 @@
 
 #include "raylib.h"
 #include "Sprite.h"
-#include "Text.hpp"
+#include "Text.h"
 #include "Object.h"
 
 using namespace std;
@@ -38,6 +39,8 @@ namespace Davengine {
     extern DAV_API int idcounter;
     extern DAV_API vector<Object*> allObjects;
     extern DAV_API vector<FontDescriptor*> fonts;
+
+    extern DAV_API vector<TextureAsset*> textureAssets;
 
     extern DAV_API float windowWidth;
     extern DAV_API float windowHeight;
@@ -81,7 +84,7 @@ namespace Davengine {
 
     DAV_API void Mainloop();
 
-    void ShutdownEngine();
+    DAV_API void ShutdownEngine();
     #else
     extern float deltaTime;
     extern vector<ModifierSample*> modifiersSamples;

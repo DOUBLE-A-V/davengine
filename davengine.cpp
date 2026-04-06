@@ -4,8 +4,8 @@
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 #include "Objprops.h"
-#include "Container.hpp"
-#include "CircleCollision.hpp"
+#include "Container.h"
+#include "CircleCollision.h"
 
 float Davengine::deltaTime = 0;
 int Davengine::idcounter = 0;
@@ -176,13 +176,14 @@ void Davengine::InitDavengine(int newWindowWidth, int newWindowHeight, string ti
     RegisterModifier(new ContainerConstraintor(), "ContainerConstraintor");
     RegisterModifier(new CircleCollision(), "CircleCollision");
     RegisterModifier(new RectCollision(), "RectCollision");
-    //RegisterModifier(new CircleDraw(), "CircleDraw");
     
 
     windowWidth = newWindowWidth;
     windowHeight = newWindowHeight;
 
     InitWindow(windowWidth, windowHeight, title.c_str());
+
+    SetWindowState(FLAG_BORDERLESS_WINDOWED_MODE);
 
     camera->offset = Vector2{0, 0};
 

@@ -9,3 +9,7 @@ void Sprite::Draw() {
 
     DrawTexturePro(texture, Rectangle{0, 0, (float)texture.width, (float)texture.height}, Rectangle{pos.x, pos.y, realWidth, realHeight}, Vector2{realWidth/2, realHeight/2}, props->rotation, color);
 }
+
+Sprite* Sprite::CreateClone() {
+    return new Sprite();
+}
