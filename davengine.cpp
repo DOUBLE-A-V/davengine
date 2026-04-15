@@ -176,12 +176,11 @@ void Davengine::InitDavengine(int newWindowWidth, int newWindowHeight, string ti
     RegisterModifier(new ContainerConstraintor(), "ContainerConstraintor");
     RegisterModifier(new CircleCollision(), "CircleCollision");
     RegisterModifier(new RectCollision(), "RectCollision");
-    
 
-    windowWidth = newWindowWidth;
-    windowHeight = newWindowHeight;
+    InitWindow(newWindowWidth, newWindowHeight, title.c_str());
 
-    InitWindow(windowWidth, windowHeight, title.c_str());
+    windowWidth = GetScreenWidth();
+    windowHeight = GetScreenHeight();
 
     SetWindowState(FLAG_BORDERLESS_WINDOWED_MODE);
 

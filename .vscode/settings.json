@@ -1,3 +1,8 @@
 {
-    "C_Cpp.default.compilerPath": "E:/llvm/bin/clang++.exe"
+    "C_Cpp.default.compilerPath": "E:/llvm/bin/clang++.exe",
+    "clang.cxxflags": [
+        "-std=c++17",
+        "-I${workspaceRoot}/include",
+        "-I${workspaceRoot}/include/modifiers"
+    ]
 }

@@ -1,0 +1,30 @@
+[
+  {
+    "file": "main.cpp",
+    "arguments": [
+      "davengine.cpp",
+      "./src/Modifier.cpp",
+      "./src/Object.cpp",
+      "./src/modifiers/CircleCollision.cpp",
+      "./src/modifiers/Collision.cpp",
+      "./src/modifiers/Container.cpp",
+      "./src/modifiers/ContainerConstraintor.cpp",
+      "./src/modifiers/MoveModifier.cpp",
+      "./src/modifiers/Objprops.cpp",
+      "./src/modifiers/RectCollision.cpp",
+      "./src/modifiers/Sprite.cpp",
+      "./src/modifiers/Text.cpp",
+      "/usr/bin/g++",
+      "-c",
+      "main.cpp",
+      "-Wall",
+      "-std=c++17",
+      "-fPIC",
+      "-o3",
+      "-I.",
+      "-I./include",
+      "-I./include/modifiers/"
+    ],
+    "directory": "/home/dav/davengine"
+  }
+]
