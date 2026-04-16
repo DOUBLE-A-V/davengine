@@ -9,6 +9,7 @@ int main() {
   RegisterModifier(new MoveModifier(), "MoveModifier");
 
   Object *obj = CreateObject("object");
+  // obj->props->position.x = 0;
   AddModifier(CreateSpriteModifier("icon.png"), obj);
   AddModifier(CreateModifier("Container"), obj);
   AddModifier(CreateModifier("MoveModifier"), obj);
@@ -17,6 +18,7 @@ int main() {
   AddModifier(CreateSpriteModifier("icon.png"), obj2);
   obj2->SetParent(obj);
   obj2->props->localPosition.x = 500;
+  obj2->props->localScale.x = 0.5f;
   Mainloop();
   ShutdownEngine();
   return 0;
