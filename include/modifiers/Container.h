@@ -1,8 +1,8 @@
-//#define DAV_DLL
+// #define DAV_DLL
 
 #ifdef DAV_EXPORTS
 #define DAV_API __declspec(dllexport)
-#else
+#elif !defined(DAV_LINUX)
 #define DAV_API __declspec(dllimport)
 #endif
 
@@ -12,38 +12,36 @@
 
 using namespace Davengine;
 
-class Container : public Modifier
-{
+class Container : public Modifier {
 public:
-    Object* parentObject;
-    bool drawInterface;
+  Object *parentObject;
+  bool drawInterface;
 
+#if !defined(DAV_DLL) && !defined(DAVENGINE_GAME)
+  virtual ~Container();
+  Container() {
+    drawInterface = false;
+    parentObject = nullptr;
+  }
 
-    #if !defined(DAV_DLL) && !defined(DAVENGINE_GAME)
-    virtual ~Container();
-    Container() {
-        drawInterface = false;
-        parentObject = nullptr;
-    }
+  Container *CreateClone() override;
 
-    Container* CreateClone() override;
+  void OnAdd() override;
 
-    void OnAdd() override;
-    
-    void DrawInterface() override;
-    void Draw() override;
-    #else
-    DAV_API virtual ~Container();
-    Container() {
-        drawInterface = false;
-        parentObject = nullptr;
-    }
+  void DrawInterface() override;
+  void Draw() override;
+#else
+  DAV_API virtual ~Container();
+  Container() {
+    drawInterface = false;
+    parentObject = nullptr;
+  }
 
-    DAV_API Container* CreateClone() override;
+  DAV_API Container *CreateClone() override;
 
-    DAV_API void OnAdd() override;
-    
-    DAV_API void DrawInterface() override;
-    DAV_API void Draw() override;
-    #endif
+  DAV_API void OnAdd() override;
+
+  DAV_API void DrawInterface() override;
+  DAV_API void Draw() override;
+#endif
 };

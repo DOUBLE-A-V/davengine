@@ -14,6 +14,7 @@ vector<ModifierSample *> Davengine::modifiersSamples = {};
 vector<Object *> Davengine::allObjects = {};
 vector<FontDescriptor *> Davengine::fonts = {};
 vector<TextureAsset *> Davengine::textureAssets = {};
+vector<ValuePhysics *> Davengine::valuesPhysics = {};
 Color Davengine::bgColor = Color{255, 255, 255, 255};
 
 float Davengine::windowWidth = 0;
@@ -124,6 +125,13 @@ Vector2 Davengine::GetMouseWorldPosition() {
                  -mousepos.y + realCamera->offset.y};
 }
 
+ValuePhysics *Davengine::CreateValuePhysics(float *valueptr, float targetval) {
+  ValuePhysics *v = new ValuePhysics(valueptr, targetval);
+  v->startVal = *valueptr;
+  valuesPhysics.push_back(v);
+  return v;
+}
+
 Sprite *Davengine::CreateSpriteModifier(string texturePath, bool useAsset) {
   Sprite *sprite = static_cast<Sprite *>(CreateModifier("Sprite"));
   if (!useAsset)
@@ -173,19 +181,23 @@ void Davengine::UnloadTextureAsset(string name) {
 
 void Davengine::InitDavengine(int newWindowWidth, int newWindowHeight,
                               string title) {
+  InitWindow(newWindowWidth, newWindowHeight, title.c_str());
+
   RegisterModifier(new Sprite(), "Sprite");
   RegisterModifier(new Text(), "Text");
   RegisterModifier(new Container(), "Container");
   RegisterModifier(new ContainerConstraintor(), "ContainerConstraintor");
   RegisterModifier(new CircleCollision(), "CircleCollision");
   RegisterModifier(new RectCollision(), "RectCollision");
-
-  InitWindow(newWindowWidth, newWindowHeight, title.c_str());
+  RegisterModifier(new RectangleDraw(), "RectangleDraw");
+  RegisterModifier(new CircleDraw(), "CircleDraw");
 
   windowWidth = GetScreenWidth();
   windowHeight = GetScreenHeight();
 
+#ifndef DAV_WEB
   SetWindowState(FLAG_BORDERLESS_WINDOWED_MODE);
+#endif
 
   camera->offset = Vector2{0, 0};
 
@@ -195,6 +207,9 @@ void Davengine::InitDavengine(int newWindowWidth, int newWindowHeight,
 void Davengine::Mainloop() {
   while (!WindowShouldClose()) {
     deltaTime = GetFrameTime();
+    for (ValuePhysics *v : valuesPhysics) {
+      v->Update(deltaTime);
+    }
     BeginDrawing();
     ClearBackground(bgColor);
     realCamera->offset = Vector2{-camera->offset.x + windowWidth / 2,

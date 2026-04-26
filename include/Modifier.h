@@ -2,7 +2,7 @@
 
 #ifdef DAV_EXPORTS
 #define DAV_API __declspec(dllexport)
-#else
+#elif !defined(DAV_LINUX)
 #define DAV_API __declspec(dllimport)
 #endif
 

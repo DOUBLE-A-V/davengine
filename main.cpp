@@ -10,12 +10,18 @@ int main() {
 
   Object *obj = CreateObject("object");
   // obj->props->position.x = 0;
-  AddModifier(CreateSpriteModifier("icon.png"), obj);
+  AddModifier(CreateSpriteModifier("res/icon.png"), obj);
   AddModifier(CreateModifier("Container"), obj);
   AddModifier(CreateModifier("MoveModifier"), obj);
+  AddModifier(CreateModifier("RectangleDraw"), obj);
+  CreateCastModifier<CircleDraw>("CircleDraw");
 
+  ValuePhysics *valp = CreateValuePhysics(&(obj->props->position.x), 800);
+  valp->changeSpeedRatio = 20;
+  valp->outElasticRatio = 0.5f;
+  // valp->overshooting = 0;
   Object *obj2 = CreateObject("object 2");
-  AddModifier(CreateSpriteModifier("icon.png"), obj2);
+  AddModifier(CreateSpriteModifier("res/icon.png"), obj2);
   obj2->SetParent(obj);
   obj2->props->localPosition.x = 500;
   obj2->props->localScale.x = 0.5f;

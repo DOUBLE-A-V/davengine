@@ -1,17 +1,19 @@
 #pragma once
-
 // #define DAV_DLL
 // #define DAVENGINE_GAME
 
 #ifdef DAV_EXPORTS
 #define DAV_API __declspec(dllexport)
-#else
+#elif !defined(DAV_LINUX)
 #define DAV_API __declspec(dllimport)
 #endif
 
+#include "CircleDraw.h"
 #include "Object.h"
+#include "RectangleDraw.h"
 #include "Sprite.h"
 #include "Text.h"
+#include "ValuePhysics.h"
 #include "raylib.h"
 
 using namespace std;
@@ -33,6 +35,7 @@ namespace Davengine {
 #ifdef DAV_DLL
 extern DAV_API float deltaTime;
 extern DAV_API vector<ModifierSample *> modifiersSamples;
+extern DAV_API vector<ValuePhysics *> valuesPhysics;
 extern DAV_API int idcounter;
 extern DAV_API vector<Object *> allObjects;
 extern DAV_API vector<FontDescriptor *> fonts;
@@ -75,16 +78,20 @@ DAV_API void DAVUnloadFont(string name);
 DAV_API Sprite *CreateSpriteModifier(string texturePath, bool useAsset = false);
 DAV_API Text *CreateTextModifier(string fontName, string text);
 
+DAV_API ValuePhysics *CreateValuePhysics(float *valueptr, float targetval);
+
 DAV_API void SetFont(Text *textModifier, string fontName);
 
 DAV_API void InitDavengine(int windowWidth, int windowHeight, string title);
 
 DAV_API void Mainloop();
+DAV_API void UpdateDrawFrame();
 
 DAV_API void ShutdownEngine();
 #else
 extern float deltaTime;
 extern vector<ModifierSample *> modifiersSamples;
+extern vector<ValuePhysics *> valuesPhysics;
 extern int idcounter;
 extern vector<Object *> allObjects;
 extern vector<FontDescriptor *> fonts;
@@ -130,11 +137,14 @@ TextureAsset *GetTextureAsset(string name);
 Sprite *CreateSpriteModifier(string texturePath, bool useAsset = false);
 Text *CreateTextModifier(string fontName, string text);
 
+ValuePhysics *CreateValuePhysics(float *valueptr, float targetval);
+
 void SetFont(Text *textModifier, string fontName);
 
 void InitDavengine(int windowWidth, int windowHeight, string title);
 
 void Mainloop();
+void UpdateDrawFrame();
 
 void ShutdownEngine();
 #endif
